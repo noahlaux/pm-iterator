@@ -2,6 +2,8 @@
 
 `<pm-iterator>` cycles through values between a two bounderies, optionally using butter smooth timed tweening with easings. You can control how many times it should perform the cycle and get notified about iteration life-cycles.
 
+check it out here http://noahlaux.github.io/pm-iterator/components/pm-iterator/
+
 __Perfect for:__
 
   * Auto advance slideshows
