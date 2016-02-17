@@ -23,7 +23,6 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "easing": "git@github.com:danro/easing-js.git",
     "tween-functions": "git@github.com:chenglou/tween-functions.git#^1.0.2"
   },
   "devDependencies": {
