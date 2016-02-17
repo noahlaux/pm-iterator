@@ -4,13 +4,13 @@
 
 __Perfect for:__
 
-  ** Auto advance slideshows
-  ** Spiffy animated counters
-  ** Composing complex animations declaratively
-  ** ...anywhere your mind takes you (plz, keep it private!)
+  * Auto advance slideshows
+  * Spiffy animated counters
+  * Composing complex animations declaratively
+  * ...anywhere your mind takes you (plz, keep it private!)
 
 #### Example for driving a slideshow:
-
+	```html
     <pm-iterator
       min="0"
       max="5"
@@ -24,9 +24,11 @@ __Perfect for:__
       <neon-animatable>Slide1</neon-animatable>
       ...
     </neon-animated-pages>
+    ```
 
 #### Example animating a box:
 
+	```html
     <pm-iterator
       value="{{ xValue }}"
       min="0"
@@ -40,40 +42,41 @@ __Perfect for:__
       class="cube"
       end$="[[ isEnd ]]"
       style="transform: translateX([[ xValue ]]px);"></div>
+     ```
 
 # Available easings
 
-  ** linear
-  ** easeInQuad
-  ** easeOutQuad
-  ** easeInOutQuad
-  ** easeInCubic
-  ** easeOutCubic
-  ** easeInOutCubic
-  ** easeInQuart
-  ** easeOutQuart
-  ** easeInOutQuart
-  ** easeInQuint
-  ** easeOutQuint
-  ** easeInOutQuint
-  ** easeInSine
-  ** easeOutSine
-  ** easeInOutSine
-  ** easeInExpo
-  ** easeOutExpo
-  ** easeInOutExpo
-  ** easeInCirc
-  ** easeOutCirc
-  ** easeInOutCirc
-  ** easeInElastic
-  ** easeOutElastic
-  ** easeInOutElastic
-  ** easeInBack
-  ** easeOutBack
-  ** easeInOutBack
-  ** easeInBounce
-  ** easeOutBounce
-  ** easeInOutBounce
+  * linear
+  * easeInQuad
+  * easeOutQuad
+  * easeInOutQuad
+  * easeInCubic
+  * easeOutCubic
+  * easeInOutCubic
+  * easeInQuart
+  * easeOutQuart
+  * easeInOutQuart
+  * easeInQuint
+  * easeOutQuint
+  * easeInOutQuint
+  * easeInSine
+  * easeOutSine
+  * easeInOutSine
+  * easeInExpo
+  * easeOutExpo
+  * easeInOutExpo
+  * easeInCirc
+  * easeOutCirc
+  * easeInOutCirc
+  * easeInElastic
+  * easeOutElastic
+  * easeInOutElastic
+  * easeInBack
+  * easeOutBack
+  * easeInOutBack
+  * easeInBounce
+  * easeOutBounce
+  * easeInOutBounce
 
 ## Dependencies
 
