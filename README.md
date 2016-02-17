@@ -10,39 +10,39 @@ __Perfect for:__
   * ...anywhere your mind takes you (plz, keep it private!)
 
 #### Example for driving a slideshow:
-	```html
-    <pm-iterator
-      min="0"
-      max="5"
-      duration="5000"
-      times="Infinite"
-      value="{{ selected }}">
-    </pm-iterator>
+```html
+<pm-iterator
+	min="0"
+	max="5"
+	duration="5000"
+	times="Infinite"
+	value="{{ selected }}">
+</pm-iterator>
 
-    <neon-animated-pages
-      selected="[[ selected ]]">
-      <neon-animatable>Slide1</neon-animatable>
-      ...
-    </neon-animated-pages>
-    ```
+<neon-animated-pages
+	selected="[[ selected ]]">
+	<neon-animatable>Slide1</neon-animatable>
+	...
+</neon-animated-pages>
+```
 
 #### Example animating a box:
 
-	```html
-    <pm-iterator
-      value="{{ xValue }}"
-      min="0"
-      max="100"
-      duration="2000"
-      is-end="{{ isEnd }}"
-      easing="easeOutBounce"
-      times="5"></pm-iterator>
+```html
+  <pm-iterator
+    value="{{ xValue }}"
+    min="0"
+    max="100"
+    duration="2000"
+    is-end="{{ isEnd }}"
+    easing="easeOutBounce"
+    times="5"></pm-iterator>
 
-    <div
-      class="cube"
-      end$="[[ isEnd ]]"
-      style="transform: translateX([[ xValue ]]px);"></div>
-     ```
+  <div
+    class="cube"
+    end$="[[ isEnd ]]"
+    style="transform: translateX([[ xValue ]]px);"></div>
+```
 
 # Available easings
 
