@@ -203,8 +203,6 @@ __Perfect for:__
           value: 'linear'
         },
 
-        _localStart: Number,
-
         /**
          * Available easings
          */
@@ -221,7 +219,12 @@ __Perfect for:__
         _currentEasing: {
           type: Function,
           computed: '_computeCurrentEasing(_easings, easing)'
-        }
+        },
+
+        /**
+         * Used for tracking time in interations
+         */
+        _iterationStartTime: Number,
 
       },
 
