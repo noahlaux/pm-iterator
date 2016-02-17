@@ -1,0 +1,311 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="easings.html">
+<!--
+`<pm-iterator>` cycles through values between a two bounderies, optionally using butter smooth timed tweening with easings. You can control how many times it should perform the cycle and get notified about iteration life-cycles.
+
+__Perfect for:__
+
+  ** Auto advance slideshows
+  ** Spiffy animated counters
+  ** Composing complex animations declaratively
+  ** ...anywhere your mind takes you (plz, keep it private!)
+
+#### Example for driving a slideshow:
+
+    <pm-iterator
+      min="0"
+      max="5"
+      duration="5000"
+      times="Infinite"
+      value="{{ selected }}">
+    </pm-iterator>
+
+    <neon-animated-pages
+      selected="[[ selected ]]">
+      <neon-animatable>Slide1</neon-animatable>
+      ...
+    </neon-animated-pages>
+
+#### Example animating a box:
+
+    <pm-iterator
+      value="{{ xValue }}"
+      min="0"
+      max="100"
+      duration="2000"
+      is-end="{{ isEnd }}"
+      easing="easeOutBounce"
+      times="5"></pm-iterator>
+
+    <div
+      class="cube"
+      end$="[[ isEnd ]]"
+      style="transform: translateX([[ xValue ]]px);"></div>
+
+# Available easings
+
+  ** linear
+  ** easeInQuad
+  ** easeOutQuad
+  ** easeInOutQuad
+  ** easeInCubic
+  ** easeOutCubic
+  ** easeInOutCubic
+  ** easeInQuart
+  ** easeOutQuart
+  ** easeInOutQuart
+  ** easeInQuint
+  ** easeOutQuint
+  ** easeInOutQuint
+  ** easeInSine
+  ** easeOutSine
+  ** easeInOutSine
+  ** easeInExpo
+  ** easeOutExpo
+  ** easeInOutExpo
+  ** easeInCirc
+  ** easeOutCirc
+  ** easeInOutCirc
+  ** easeInElastic
+  ** easeOutElastic
+  ** easeInOutElastic
+  ** easeInBack
+  ** easeOutBack
+  ** easeInOutBack
+  ** easeInBounce
+  ** easeOutBounce
+  ** easeInOutBounce
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="pm-iterator">
+  <script>
+    Polymer({
+
+      /**
+       * Fired when `pm-iterator` starts an interation
+       * The detail is the current iteration
+       * @event pm-iterator-iteration-start
+       */
+
+      /**
+       * Fired when `pm-iterator` ends an interation
+       *
+       * @event pm-iterator-iteration-end
+       */
+
+      /**
+       * Fired when `pm-iterator` ends all projected iterations
+       *
+       * @event pm-iterator-iteration-all-end
+       */
+
+      is: 'pm-iterator',
+
+      properties: {
+
+        /**
+         * Start value
+         */
+        min: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * End value
+         */
+        max: {
+          type: Number,
+          value: 100
+        },
+
+        /**
+         * Duration in ms for iterations
+         */
+        duration: {
+          type: Number,
+          value: 1000
+        },
+
+        /**
+         * Current value
+         */
+        value: {
+          type: Number,
+          readOnly: true,
+          notify: true
+        },
+
+        /**
+         * Number of times to restart
+         * use `Infinite` to never stop
+         */
+        times: {
+          type: Number,
+          value: 1
+        },
+
+        /**
+         * Current interation
+         */
+        currentIteration: {
+          type: Number,
+          value: 0,
+          readOnly: true,
+          notify: true
+        },
+
+        /**
+         * Whether we are in the beginning an iteration
+         */
+        isIterationStart: {
+          type: Boolean,
+          readOnly: true,
+          notify: true
+        },
+
+        /**
+         * Whether we are in the end an iteration
+         */
+        isIterationEnd: {
+          type: Boolean,
+          readOnly: true,
+          notify: true
+        },
+
+        /**
+         * True if all iterations have finished
+         */
+        isEnd: {
+          type: Boolean,
+          readOnly: true,
+          notify: true
+        },
+
+        /**
+         * Whether the value should use floating points
+         * or be ceiled
+         */
+        useFloats: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Current easing method
+         * See `readme` of available options
+         */
+        easing: {
+          type: String,
+          value: 'linear'
+        },
+
+        _localStart: Number,
+
+        /**
+         * Available easings
+         */
+        _easings: {
+          type: Object,
+          value: function () {
+            return window.tweenFunctions;
+          }
+        },
+
+        /**
+         * Currently used easing
+         */
+        _currentEasing: {
+          type: Function,
+          computed: '_computeCurrentEasing(_easings, easing)'
+        }
+
+      },
+
+      ready: function () {
+        this._setValue(this.min);
+        this._iterate();
+      },
+
+      _computeCurrentEasing: function (easings, easing) {
+        if (!easings[easing]) {
+          console.warn('easing ' + easing + ' is not installed, using linear');
+        }
+        return easings[easing] || easings.linear;
+      },
+
+      _iterate: function () {
+        this._frame = window.requestAnimationFrame(this._performIteration.bind(this));
+      },
+
+      _performIteration: function (timestamp) {
+
+        if (!this._iterationStartTime) {
+          this._setupIteration(timestamp, this.min);
+        }
+
+        var progress = timestamp - this._iterationStartTime;
+        var computedValue = this._computeValue(progress, this.min, this.max, this.duration, this._currentEasing);
+
+        this._setValue(computedValue);
+        this._setIsIterationStart(false);
+
+        if (progress < this.duration) {
+          // Still running
+          this._iterate();
+        } else {
+          // current iteration has ended
+          this._setIsIterationEnd(true);
+          this.fire('pm-iterator-iteration-end');
+
+          if (!Number.isFinite(this.times) || this.times !== this.currentIteration) {
+            // lets take another round
+            this._advance();
+          } else if (this.times === this.currentIteration) {
+            // nope, this is the end
+            this._end();
+          }
+        }
+
+      },
+
+      _computeValue: function (progress, min, max, duration, easing) {
+        var easingValue = easing(progress, min, max, duration);
+        var formattedValue =
+          // use floating point
+          this.useFloats ? easingValue :
+          // convert to integer
+          easingValue > 0 && easingValue < 1 ? parseInt(easingValue, 10) : Math.ceil(easingValue);
+
+        // ceil upperboundery as requestAnimationFrame can do above max
+        return formattedValue < max ? formattedValue : max;
+      },
+
+      _advance: function () {
+        this._setIsIterationEnd(false);
+        this._iterationStartTime = null;
+        this._iterate();
+      },
+
+      _end: function () {
+        this._setIsEnd(true);
+        this.fire('pm-iterator-iteration-all-end');
+        cancelAnimationFrame(this._frame);
+      },
+
+      _setupIteration: function (timestamp, value) {
+        this._iterationStartTime = timestamp;
+        this._setIsIterationStart(true);
+        this._setCurrentIteration(this.currentIteration + 1);
+        this.fire('pm-iterator-iteration-start', this.currentIteration);
+        this._setValue(value);
+        this._setIsEnd(false);
+        this._setIsIterationEnd(false);
+      }
+
+    });
+  </script>
+</dom-module>

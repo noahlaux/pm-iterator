@@ -1,0 +1,35 @@
+{
+  "name": "pm-iterator",
+  "version": "0.0.1",
+  "authors": [
+    "Noah Laux <noahlaux@gmail.com>"
+  ],
+  "description": "Cycles through values between a two bounderies, optionally using butter smooth timed tweening with easings.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "cycle",
+    "iterate",
+    "slideshow",
+    "tween",
+    "easing"
+  ],
+  "main": "pm-iterator.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/noahlaux/pm-iterator/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "easing": "git@github.com:danro/easing-js.git",
+    "tween-functions": "git@github.com:chenglou/tween-functions.git#^1.0.2"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^3.4.0",
+    "neon-animation": "PolymerElements/neon-animation#^1.1.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.1.0"
+  }
+}
