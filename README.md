@@ -11,39 +11,48 @@ __Perfect for:__
   * Composing complex animations declaratively
   * ...anywhere your mind takes you (plz, keep it private!)
 
+#### Example animating a box:
+The box slide for 2 seconds with an bouncy animation and get an `end` attribute set when iteration is done.
+```html
+<pm-iterator
+  auto-start
+  min="0"
+  max="100"
+  duration="2000"
+  value="{{ xValue }}"
+  is-end="{{ isEnd }}"
+  easing="easeOutBounce"
+  times="5">
+</pm-iterator>
+
+<div
+  class="cube"
+  end$="[[ isEnd ]]"
+  style="transform: translateX([[ xValue ]]px);"></div>
+```
+
 #### Example for driving a slideshow:
 ```html
 <pm-iterator
+	id="slideShowIterator"
 	min="0"
 	max="5"
 	duration="5000"
 	times="Infinite"
-	value="{{ selected }}">
+	value="{{ selectedSlide }}">
 </pm-iterator>
 
-<neon-animated-pages
-	selected="[[ selected ]]">
+<button on-tap="start">Start</buttonn>
+<neon-animated-pages selected="[[ selectedSlide ]]">
 	<neon-animatable>Slide1</neon-animatable>
 	...
 </neon-animated-pages>
-```
 
-#### Example animating a box:
-
-```html
-  <pm-iterator
-    value="{{ xValue }}"
-    min="0"
-    max="100"
-    duration="2000"
-    is-end="{{ isEnd }}"
-    easing="easeOutBounce"
-    times="5"></pm-iterator>
-
-  <div
-    class="cube"
-    end$="[[ isEnd ]]"
-    style="transform: translateX([[ xValue ]]px);"></div>
+<script>
+	function start() {
+		this.$.slideShowIterator.start();
+	}
+</script>
 ```
 
 # Available easings
