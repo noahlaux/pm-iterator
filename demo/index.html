@@ -53,7 +53,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is-end="{{ isEnd }}"
         current-iteration="{{ currentIteration }}"
         easing="easeOutBounce"
-        times="3"
+        times="1"
+        auto-start
         use-floats="true"
       ></pm-iterator>
 
@@ -66,15 +67,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <input type="range" min="0" max="100" value="{{ firstValue::input }}">
       <div class="cube" end$="[[ isEnd ]]" style="transform: translateX([[ firstValue ]]px);"></div>
 
+      <pm-iterator
+        value="{{ secondValue }}"
+        min="0"
+        max="100"
+        duration="2000"
+        easing="easeOutCirc"
+        times="1"
+        auto-start="{{ isEnd }}"
+      ></pm-iterator>
+
+      <input type="range" min="0" max="100" value="{{ secondValue::input }}">
+      <div class="cube" end$="[[ isEndSecond ]]" style="transform: translateX([[ secondValue ]]px);"></div>
+
       <h2>Slide show</h2>
       <pm-iterator
+        id="slideShowIterator"
         min="0"
         max="4"
         duration="8000"
         times="Infinite"
+        is-running="{{ isSlideShowRunning }}"
         value="{{ selected }}">
       </pm-iterator>
       Currently selected = [[ selected ]]
+      running: [[ isSlideShowRunning ]]
+      <button on-tap="startSlideShow">Start</button>
+      <button on-tap="stopSlideShow">Stop</button>
       <neon-animated-pages id="slideShow" selected="[[ selected ]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
         <template is="dom-repeat" items='[0,1,2,3,4]'>
           <neon-animatable>
@@ -82,5 +101,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
       </neon-animated-pages>
     </template>
+
+    <script>
+      var scope = document.querySelector('template[is="dom-bind"]');
+
+      scope.addEventListener('dom-change', function () {
+
+        var slideShowIterator = document.querySelector('#slideShowIterator');
+
+        scope.startSlideShow = function () {
+          slideShowIterator.start();
+        };
+
+        scope.stopSlideShow = function () {
+          slideShowIterator.stop();
+        };
+
+      });
+
+    </script>
   </body>
 </html>

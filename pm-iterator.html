@@ -10,37 +10,48 @@ __Perfect for:__
   ** Composing complex animations declaratively
   ** ...anywhere your mind takes you (plz, keep it private!)
 
-#### Example for driving a slideshow:
-
-    <pm-iterator
-      min="0"
-      max="5"
-      duration="5000"
-      times="Infinite"
-      value="{{ selected }}">
-    </pm-iterator>
-
-    <neon-animated-pages
-      selected="[[ selected ]]">
-      <neon-animatable>Slide1</neon-animatable>
-      ...
-    </neon-animated-pages>
-
 #### Example animating a box:
+The box slide for 2 seconds with an bouncy animation and get an `end` attribute set when iteration is done.
 
     <pm-iterator
-      value="{{ xValue }}"
+      auto-start
       min="0"
       max="100"
       duration="2000"
+      value="{{ xValue }}"
       is-end="{{ isEnd }}"
       easing="easeOutBounce"
-      times="5"></pm-iterator>
+      times="5">
+    </pm-iterator>
 
     <div
       class="cube"
       end$="[[ isEnd ]]"
       style="transform: translateX([[ xValue ]]px);"></div>
+
+#### Example for driving a slideshow:
+
+    <pm-iterator
+      id="slideShowIterator"
+      min="0"
+      max="5"
+      duration="5000"
+      times="Infinite"
+      value="{{ selectedSlide }}">
+    </pm-iterator>
+
+    <button on-tap="start">Start</buttonn>
+    <neon-animated-pages
+      selected="[[ selectedSlide ]]">
+      <neon-animatable>Slide1</neon-animatable>
+      ...
+    </neon-animated-pages>
+
+    <script>
+      function start() {
+        this.$.slideShowIterator.start();
+      }
+    </script>
 
 # Available easings
 
@@ -186,6 +197,16 @@ __Perfect for:__
         },
 
         /**
+         * Indicates if iterations are currently running
+         */
+        isRunning: {
+          type: Boolean,
+          value: false,
+          readOnly: true,
+          notify: true
+        },
+
+        /**
          * Whether the value should use floating points
          * or be ceiled
          */
@@ -201,6 +222,15 @@ __Perfect for:__
         easing: {
           type: String,
           value: 'linear'
+        },
+
+        /**
+         * Whether iteration should start imediatly
+         */
+        autoStart: {
+          type: Boolean,
+          value: false,
+          notify: true
         },
 
         /**
@@ -228,9 +258,40 @@ __Perfect for:__
 
       },
 
-      ready: function () {
-        this._setValue(this.min);
+      observers: [
+        '_performAutoStart(autoStart, min)'
+      ],
+
+      _performAutoStart: function (autoStart, minValue) {
+
+        if (!this.value) {
+          this._setValue(minValue);
+        }
+
+        if (autoStart) {
+          this._setCurrentIteration(0);
+          this.start();
+        }
+      },
+
+      /**
+       * Starts the iterations
+       */
+      start: function () {
+        // cancel previous running frames if any
+        if (this._frame) {
+          cancelAnimationFrame(this._frame);
+        }
+        this._setIsRunning(true);
         this._iterate();
+      },
+
+      /**
+       * Stops the iterations
+       */
+      stop: function () {
+        cancelAnimationFrame(this._frame);
+        this._setIsRunning(false);
       },
 
       _computeCurrentEasing: function (easings, easing) {
@@ -296,7 +357,7 @@ __Perfect for:__
       _end: function () {
         this._setIsEnd(true);
         this.fire('pm-iterator-iteration-all-end');
-        cancelAnimationFrame(this._frame);
+        this.stop();
       },
 
       _setupIteration: function (timestamp, value) {
