@@ -1,0 +1,124 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>pm-iterator Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../neon-animation/neon-animation.html">
+    <link rel="import" href="../pm-iterator.html">
+    <style>
+      .cube {
+        width: 50px;
+        height: 50px;
+        background-color: red;
+      }
+      .cube[end] {
+        background-color: blue;
+      }
+
+      #slideShow {
+        width: 400px;
+        height: 200px;
+        overflow: hidden;
+      }
+      .slide {
+        /*width: 200px;
+        height: 200px;*/
+        background-color: blue;
+      }
+    </style>
+  </head>
+  <body unresolved>
+    <template is="dom-bind">
+
+      <h2>Strange box</h2>
+      <pm-iterator
+        value="{{ firstValue }}"
+        min="0"
+        max="100"
+        duration="2000"
+        is-iteration-start="{{ isIterationStart }}"
+        is-iteration-end="{{ isIterationEnd }}"
+        is-end="{{ isEnd }}"
+        current-iteration="{{ currentIteration }}"
+        easing="easeOutBounce"
+        times="1"
+        auto-start
+        use-floats="true"
+      ></pm-iterator>
+
+      <div>value: [[ firstValue ]]</div>
+      <div>iteration start: [[ isIterationStart ]]</div>
+      <div>iteration end: [[ isIterationEnd ]]</div>
+      <div>Current iteration [[ currentIteration ]]</div>
+      <div> All ended: [[ isEnd ]]</div>
+
+      <input type="range" min="0" max="100" value="{{ firstValue::input }}">
+      <div class="cube" end$="[[ isEnd ]]" style="transform: translateX([[ firstValue ]]px);"></div>
+
+      <pm-iterator
+        value="{{ secondValue }}"
+        min="0"
+        max="100"
+        duration="2000"
+        easing="easeOutCirc"
+        times="1"
+        auto-start="{{ isEnd }}"
+      ></pm-iterator>
+
+      <input type="range" min="0" max="100" value="{{ secondValue::input }}">
+      <div class="cube" end$="[[ isEndSecond ]]" style="transform: translateX([[ secondValue ]]px);"></div>
+
+      <h2>Slide show</h2>
+      <pm-iterator
+        id="slideShowIterator"
+        min="0"
+        max="4"
+        duration="8000"
+        times="Infinite"
+        is-running="{{ isSlideShowRunning }}"
+        value="{{ selected }}">
+      </pm-iterator>
+      Currently selected = [[ selected ]]
+      running: [[ isSlideShowRunning ]]
+      <button on-tap="startSlideShow">Start</button>
+      <button on-tap="stopSlideShow">Stop</button>
+      <neon-animated-pages id="slideShow" selected="[[ selected ]]" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+        <template is="dom-repeat" items='[0,1,2,3,4]'>
+          <neon-animatable>
+            <img src="http://lorempixel.com/400/200/cats/?[[ index ]]" class="slide"></neon-animatable>
+        </template>
+      </neon-animated-pages>
+    </template>
+
+    <script>
+      var scope = document.querySelector('template[is="dom-bind"]');
+
+      scope.addEventListener('dom-change', function () {
+
+        var slideShowIterator = document.querySelector('#slideShowIterator');
+
+        scope.startSlideShow = function () {
+          slideShowIterator.start();
+        };
+
+        scope.stopSlideShow = function () {
+          slideShowIterator.stop();
+        };
+
+      });
+
+    </script>
+  </body>
+</html>
